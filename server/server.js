@@ -11,7 +11,7 @@ var createSession = require('./util.js');
 if(!process.env.clientID) {
 var credentials = require('./env/config.js')
 } else {
- var deployedURL = `https://onf00t.herokuapp.com/auth/facebook/callback`
+ var deployedURL = `https://food-walker.herokuapp.com/auth/facebook/callback`
 }
 
 var User = require('./db/user');
@@ -245,24 +245,24 @@ app.get('/username', function(req, res){
 })
 
 app.post('/saveRestaurant', function(req, res){
-  console.log("We are reaching server.js")
   var user = req.session.userID;
-  console.log("Here is the request body!!!!!!!!!!!!!", req.body)
   var place_id = req.body.place_id;
   var name = req.body.name;
   var rating = req.body.rating;
   var price_level = req.body.price_level;
   var vicinity = req.body.vicinity;
   var geometry = req.body.geometry;
-  //console.log("THE STUFF! ---->", user,place_id,name, rating, price_level, vicinity);
-  User.findOneAndUpdate({id:user},{$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:null }}},
+
+  //UPDATE THIS TO GET RID OF DUPLICATES
+  User.findOneAndUpdate({id:user}, {$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:null }}},
     {safe: true, upsert: true, new : true},
-      function(err, model) {
-        console.log(err);
-        res.send("success");
-       }
+    function(err, model) {
+      console.log(err);
+      res.send("success");
+    }
   )
 })
+
 
 app.get('/checkList', function(req, res){
   var user = req.session.userID;
