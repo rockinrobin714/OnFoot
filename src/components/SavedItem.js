@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './css/Item.css';
 import postRestaurant from './lib/postRestaurant.js';
+import NotesModal from './NotesModal'
 
 
 
@@ -49,8 +50,8 @@ render(){
             <h3>{this.props.item.name}</h3>
             <p className='list-location-address'>{this.props.item.vicinity}</p>
             <a className='list-location-button' target='_blank' href={queryStr}>Get Map</a>
-            <button className='list-location-button' target='_blank'>Add a note</button>
-            <button className='list-location-button' target='_blank' onClick={this.delete.bind(this)}>Delete from saved list</button>
+            <NotesModal item={this.props.item}/>
+            <button className='list-location-button' onClick={this.delete.bind(this)}>Delete from saved list</button>
           </div>
         </div>
       </div>    

@@ -243,32 +243,18 @@ class App extends Component {
   }
 
   deleteFromSavedList(restaurant){
-    console.log("Front end deleting!")
     deleteRestaurant(restaurant.place_id,restaurant.name,restaurant.rating,restaurant.price_level,restaurant.vicinity, restaurant.geometry);
-  }
-
-  renderWhichList(){
-    if(this.state.showList===false){
-      return null;
-    }else{
-      if(this.state.showSaveRestaurants===false){
-
-        return (
-          <List
-            dollars={this.state.dollars}
-            radius={this.state.radius}
-            data={this.state.data}
-            API={this.state.imageAPI}
-            isLogin={this.state.isLogin}
-            showSaveRestaurants={this.state.showSaveRestaurants}
-            displayDirections={this.displayDirections.bind(this)}
-            objLatLng={this.state.objLatLng}
-          />
-        )
-      } else {
-        return <SavedList deleteFromSavedList={this.deleteFromSavedList.bind(this)} data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> 
+    var oldData = this.state.savedRestaurantData;
+    console.log("First, length is...", oldData.length)
+    var index;
+    for (var i=0;i<oldData.length;i++){
+      if (oldData[i]===restaurant){
+        index = i;
       }
     }
+    oldData.splice(index,1)
+    this.setState({savedRestaurantData:oldData})
+    console.log("second, length is...", oldData.length)
   }
 
   render() {
@@ -308,7 +294,7 @@ class App extends Component {
         }
         {
           this.state.showSaveRestaurants ?
-            <SavedList data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
+            <SavedList deleteFromSavedList={this.deleteFromSavedList.bind(this)} data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
         }
         {
           this.state.showList ?

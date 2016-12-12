@@ -274,12 +274,12 @@ app.put('/deleteRestaurant', function(req, res){
   // var price_level = req.body.price_level;
   // var vicinity = req.body.vicinity;
   // var geometry = req.body.geometry;
-  User.findOneAndUpdate({id:user}), {$pull:{"checkList":{place_id:place_id}}},
+  User.findOneAndUpdate({id:user}, {$pull:{"checkList":{place_id:place_id}}},
     {safe: true, upsert: true},
     function(err,model){
     console.log(err);
     res.send("success");
-    }
+    })
   })
 
 

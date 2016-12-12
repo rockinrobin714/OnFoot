@@ -150,14 +150,26 @@ a.list-location-button {
   position: absolute;
   top: 3px;
   right: 10px;
+  color:black;
 }
 
 .modal-inside {
   margin-top: 20px;
+  color:black;
 }
 
 .modal-inside div > div {
   margin-bottom: 15px;
   font-size: 1.5rem;
+  color:black;
 }
-
+.modal-button {
+  width:100px;
+}
+.input {
+  width:300px;
+}
+.black-notes {
+  color:black;
+  font-size:24px;
+}
