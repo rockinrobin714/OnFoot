@@ -166,10 +166,20 @@ a.list-location-button {
 .modal-button {
   width:100px;
 }
-.input {
-  width:300px;
+input {
+  width:80%;
+  margin:10px;
 }
-.black-notes {
+.black-notes-header {
   color:black;
+  font-size:36px;
+}
+.black-notes{
+  font-size:24px;
+  text-align:center;
+}
+.modal-question {
+  padding:10px;
+  text-align:center;
   font-size:24px;
 }

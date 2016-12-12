@@ -15,6 +15,7 @@ class NotesModal extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      text:'',
       isOpen: false
     };
   }
@@ -37,6 +38,7 @@ class NotesModal extends React.Component {
   };
   onSubmit(){
     console.log("submitted")
+    this.props.addNote(this.props.item, this.state.text)
     this.hideModal();
   }
 
@@ -57,14 +59,14 @@ class NotesModal extends React.Component {
           <button className='list-location-button' onClick={this.openModal.bind(this)}>Notes</button>
           <Modal isOpen={isOpen} size="modal-lg" onRequestHide={this.hideModal.bind(this)}>
             <ModalHeader >
-              <div className='black-notes'>Notes on {this.props.item.name}</div>
+              <div className='black-notes-header'>Notes on {this.props.item.name}</div>
               <ModalClose onClick={this.hideModal.bind(this)}/>
             </ModalHeader>
-              <div className='modal-inside'>
+              <div className='black-notes modal-inside'>
                 Test test{this.props.item.notes}
               </div>
               <ModalFooter>
-                &nbsp; What do you have to say about {this.props.item.name}? &nbsp;
+                <div className='modal-question'>What do you have to say about {this.props.item.name}?</div>
                 <input 
                 onChange={this.onTextChange.bind(this)} 
                 className='modal-input' 

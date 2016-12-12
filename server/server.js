@@ -246,9 +246,10 @@ app.post('/saveRestaurant', function(req, res){
   var price_level = req.body.price_level;
   var vicinity = req.body.vicinity;
   var geometry = req.body.geometry;
+  var notes = [];
 
   //UPDATE THIS TO GET RID OF DUPLICATES
-  User.findOneAndUpdate({id:user}, {$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry}}},
+  User.findOneAndUpdate({id:user}, {$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:[]}}},
     {safe: true, upsert: true, new : true},
     function(err, model) {
       console.log(err);
@@ -266,15 +267,22 @@ app.get('/checkList', function(req, res){
 })
 
 app.put('/deleteRestaurant', function(req, res){
-  console.log("I got to the server! and here is the body", req.body)
   var user = req.session.userID;
   var place_id = req.body.place_id;
-  // var name = req.body.name;
-  // var rating = req.body.rating;
-  // var price_level = req.body.price_level;
-  // var vicinity = req.body.vicinity;
-  // var geometry = req.body.geometry;
   User.findOneAndUpdate({id:user}, {$pull:{"checkList":{place_id:place_id}}},
+  {safe: true, upsert: true},
+  function(err,model){
+  console.log(err);
+  res.send("success");
+  })
+})
+
+app.post('/postNote', function(req, res){
+  console.log("I got to the server side part and my body is", req.body)
+  var user = req.session.userID;
+  var place_id = req.body.place_id;
+  var text=req.body.text
+  User.findOneAndUpdate({id:user, checklist:{place_id:place_id}}, {$push:{"notes":{text:text}}},
     {safe: true, upsert: true},
     function(err,model){
     console.log(err);

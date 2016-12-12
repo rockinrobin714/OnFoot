@@ -29,6 +29,7 @@ import isLogin from './lib/isLogin.js'
 import getDisplayName from './lib/getDisplayName.js'
 import getSaveRestaurant from './lib/getSaveRestaurant.js'
 import getLatLong from './lib/getLatLong.js'
+import postNote from './lib/addNote.js'
 
 
 //New Libs for Team Troll
@@ -155,6 +156,7 @@ class App extends Component {
      // }
       this.setState({showSaveRestaurants: true});
     })
+    this.setState({showList:false});
   }
 
 //Updates state to not show save restaurants.
@@ -238,14 +240,17 @@ class App extends Component {
   }
 
   getOutOfSavedList(){
-    //this.setState({showList:true})
+    this.setState({showList:true})
     this.setState({showSaveRestaurants:false})
+  }
+  addNote(restaurant,text){
+    console.log("I am adding a note")
+    postNote(restaurant.place_id, text);
   }
 
   deleteFromSavedList(restaurant){
     deleteRestaurant(restaurant.place_id,restaurant.name,restaurant.rating,restaurant.price_level,restaurant.vicinity, restaurant.geometry);
     var oldData = this.state.savedRestaurantData;
-    console.log("First, length is...", oldData.length)
     var index;
     for (var i=0;i<oldData.length;i++){
       if (oldData[i]===restaurant){
@@ -254,7 +259,6 @@ class App extends Component {
     }
     oldData.splice(index,1)
     this.setState({savedRestaurantData:oldData})
-    console.log("second, length is...", oldData.length)
   }
 
   render() {
@@ -294,7 +298,7 @@ class App extends Component {
         }
         {
           this.state.showSaveRestaurants ?
-            <SavedList deleteFromSavedList={this.deleteFromSavedList.bind(this)} data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
+            <SavedList addNote={this.addNote.bind(this)} deleteFromSavedList={this.deleteFromSavedList.bind(this)} data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
         }
         {
           this.state.showList ?
