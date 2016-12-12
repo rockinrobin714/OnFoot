@@ -57,6 +57,7 @@ class RequestModal extends React.Component {
             <div className='modal-inside'>
               <div>
                 {this.props.item.directions && this.props.item.directions.map((x) => {
+                  console.log("Directions are.....", this.props.item.directions) 
                   return (
                     <div>{x}</div>
                     )

@@ -19,7 +19,7 @@ class SavedList extends Component {
         <ul className='row'>
           {
             this.props.data.map((restaurant) =>
-            <SavedItem item={restaurant} API={this.props.API} displayDirections={this.props.displayDirections}/>
+            <SavedItem deleteFromSavedList={this.props.deleteFromSavedList} item={restaurant} API={this.props.API} displayDirections={this.props.displayDirections}/>
             )
           }
         </ul>
