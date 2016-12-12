@@ -18,9 +18,9 @@
 //Standard imports
 import React, { Component } from 'react';
 import logo from '../logo.svg';
-import './css/App.css';
 
 //Import lib helper functions.
+import deleteRestaurant from './lib/deleteRestaurant.js'
 import getRestaurants from './lib/getRestaurants.js'
 import getAddress from './lib/getAddress.js'
 import getDirections from './lib/getDirections.js'
@@ -29,6 +29,7 @@ import isLogin from './lib/isLogin.js'
 import getDisplayName from './lib/getDisplayName.js'
 import getSaveRestaurant from './lib/getSaveRestaurant.js'
 import getLatLong from './lib/getLatLong.js'
+import postNote from './lib/addNote.js'
 
 
 //New Libs for Team Troll
@@ -155,6 +156,7 @@ class App extends Component {
      // }
       this.setState({showSaveRestaurants: true});
     })
+    this.setState({showList:false});
   }
 
 //Updates state to not show save restaurants.
@@ -200,6 +202,7 @@ class App extends Component {
     // getDirections from lib/getDirections
     //^ = GET to /directions/ endpoint
     //^ = Google maps API call for directions.
+    console.log("The location is", location)
     getDirections(location,(steps) => {
       //get all data needed then replace the current display to a direction component
       this.setState({directions:steps});
@@ -207,7 +210,14 @@ class App extends Component {
       // this.setState({showDirections:true});
 
       // we get an array with the results back from the Google API; that's what we're accessing
-      var data=this.state.data.results;
+      var data;
+      if (this.state.showSaveRestaurants===false){
+        data=this.state.data.results;
+      } else {
+        data=this.state.savedRestaurantData;
+        console.log(this.state.savedRestaurantData)
+      }
+      console.log(this.state.data.results)
 
       // Take a deep breath...
       // get the directions out of the JSON object and onto the page
@@ -221,7 +231,7 @@ class App extends Component {
       // set a directions property equal to the "steps" from Google's directions
       // (with quadratic time complexity :) )
       data[data.map(x => x.id).indexOf(id)]['directions'] = directionSteps;
-
+      console.log("The directionSteps are ...", directionSteps)
       // In order to get the directions to display in each "card", we had to use forceUpdate.
       // There's probably a better way to handle this...
       this.forceUpdate();
@@ -230,31 +240,25 @@ class App extends Component {
   }
 
   getOutOfSavedList(){
-    //this.setState({showList:true})
+    this.setState({showList:true})
     this.setState({showSaveRestaurants:false})
   }
+  addNote(restaurant,text){
+    console.log("I am adding a note")
+    postNote(restaurant.place_id, text);
+  }
 
-  renderWhichList(){
-    if(this.state.showList===false){
-      return null;
-    }else{
-      if(this.state.showSaveRestaurants===false){
-        return (
-          <List
-            dollars={this.state.dollars}
-            radius={this.state.radius}
-            data={this.state.data}
-            API={this.state.imageAPI}
-            isLogin={this.state.isLogin}
-            showSaveRestaurants={this.state.showSaveRestaurants}
-            displayDirections={this.displayDirections.bind(this)}
-            objLatLng={this.state.objLatLng}
-          />
-        )
-      } else {
-        return <SavedList data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> 
+  deleteFromSavedList(restaurant){
+    deleteRestaurant(restaurant.place_id,restaurant.name,restaurant.rating,restaurant.price_level,restaurant.vicinity, restaurant.geometry);
+    var oldData = this.state.savedRestaurantData;
+    var index;
+    for (var i=0;i<oldData.length;i++){
+      if (oldData[i]===restaurant){
+        index = i;
       }
     }
+    oldData.splice(index,1)
+    this.setState({savedRestaurantData:oldData})
   }
 
   render() {
@@ -294,7 +298,7 @@ class App extends Component {
         }
         {
           this.state.showSaveRestaurants ?
-            <SavedList data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
+            <SavedList addNote={this.addNote.bind(this)} deleteFromSavedList={this.deleteFromSavedList.bind(this)} data={this.state.savedRestaurantData} API={this.state.imageAPI} displayDirections={this.displayDirections.bind(this)}/> : null
         }
         {
           this.state.showList ?

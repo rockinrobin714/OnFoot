@@ -11,7 +11,7 @@ var createSession = require('./util.js');
 if(!process.env.clientID) {
 var credentials = require('./env/config.js')
 } else {
- var deployedURL = `https://onf00t.herokuapp.com/auth/facebook/callback`
+ var deployedURL = `https://food-walker.herokuapp.com/auth/facebook/callback`
 }
 
 var User = require('./db/user');
@@ -76,7 +76,6 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   function(req, res) {
-    console.log("req",req.user);
     User.findOne({id:req.user.id}).exec(function(err,found){
       if(!found){
         var user = new User({id:req.user.id,name:req.user.displayName})
@@ -103,7 +102,6 @@ app.get('/logout', function(req, res){
 app.get('/isLogin', function(req, res){
   var isLogin = req.session.userID ? true : false;
   User.findOne({id:req.session.userID}).exec(function(err,user){
-    console.log("found",user);
     var user = user ? user.name : ""
     var data = {isLogin:isLogin,name:user};
     res.json(data);
@@ -137,7 +135,6 @@ app.all('*', function(req, res, next) {
 
 
 app.get('/', function(req,res){
-  console.log("auth", req.isAuthenticated());
   res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'));
 })
 
@@ -161,7 +158,6 @@ app.get('/fetchData/:location/:radius',function(req,res){
   request(`${url}&location=${location}&key=${mapKey}`, function (error, response, body) {
     console.log(error);
     if (!error && response.statusCode == 200) {
-      console.log(body);
       res.json(body);
     }
   })
@@ -170,7 +166,6 @@ app.get('/fetchData/:location/:radius',function(req,res){
 //As above, but will accept a 'distance' value with which to set the search.
 app.get('/variableDistanceSearch/:location/:distance',function(req,res){
   var mapKey = process.env.mapKey || credentials.mapKey
-  console.log('Distance request?', req.params);
   location = req.params.location
   distance = req.params.distance;
   //Data validation.
@@ -186,7 +181,6 @@ app.get('/variableDistanceSearch/:location/:distance',function(req,res){
   request(`${url}&location=${location}&key=${mapKey}`, function (error, response, body) {
     console.log(error);
     if (!error && response.statusCode == 200) {
-      console.log('body?', body);
       res.json(body);
     }
   })
@@ -245,33 +239,56 @@ app.get('/username', function(req, res){
 })
 
 app.post('/saveRestaurant', function(req, res){
-  console.log("We are reaching server.js")
   var user = req.session.userID;
-  console.log("Here is the request body!!!!!!!!!!!!!", req.body)
   var place_id = req.body.place_id;
   var name = req.body.name;
   var rating = req.body.rating;
   var price_level = req.body.price_level;
   var vicinity = req.body.vicinity;
   var geometry = req.body.geometry;
-  //console.log("THE STUFF! ---->", user,place_id,name, rating, price_level, vicinity);
-  User.findOneAndUpdate({id:user},{$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:null }}},
+  var notes = [];
+
+  //UPDATE THIS TO GET RID OF DUPLICATES
+  User.findOneAndUpdate({id:user}, {$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:[]}}},
     {safe: true, upsert: true, new : true},
-      function(err, model) {
-        console.log(err);
-        res.send("success");
-       }
+    function(err, model) {
+      console.log(err);
+      res.send("success");
+    }
   )
 })
+
 
 app.get('/checkList', function(req, res){
   var user = req.session.userID;
   User.findOne({id:user}).exec(function(err,user){
-    console.log("found",user);
     res.send(user);
   })
 })
 
+app.put('/deleteRestaurant', function(req, res){
+  var user = req.session.userID;
+  var place_id = req.body.place_id;
+  User.findOneAndUpdate({id:user}, {$pull:{"checkList":{place_id:place_id}}},
+  {safe: true, upsert: true},
+  function(err,model){
+  console.log(err);
+  res.send("success");
+  })
+})
+
+app.post('/postNote', function(req, res){
+  console.log("I got to the server side part and my body is", req.body)
+  var user = req.session.userID;
+  var place_id = req.body.place_id;
+  var text=req.body.text
+  User.findOneAndUpdate({id:user, checklist:{place_id:place_id}}, {$push:{"notes":{text:text}}},
+    {safe: true, upsert: true},
+    function(err,model){
+    console.log(err);
+    res.send("success");
+    })
+  })
 
 
 

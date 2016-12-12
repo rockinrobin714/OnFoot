@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './css/Item.css';
 import postRestaurant from './lib/postRestaurant.js';
-import DirectionsModal from './DirectionsModal';
+import NotesModal from './NotesModal'
+
 
 
 class SavedItem extends Component {
@@ -10,9 +11,8 @@ class SavedItem extends Component {
     this.state = {};
   }
 
-  directionsClick(e) {
-    var geolocation = `${this.props.item.geometry.location.lat},${this.props.item.geometry.location.lng}`;
-    this.props.displayDirections(geolocation, this.props.item.id);
+  delete(){
+    this.props.deleteFromSavedList(this.props.item);
   }
   
   // this function turns `item.price_level` into a dollar sign level
@@ -35,7 +35,6 @@ class SavedItem extends Component {
 render(){
    // variable string for link to Google maps directions
   let queryStr = "https://www.google.com/maps?saddr=My+Location&daddr=" + this.props.item.geometry.location.lat + "," + this.props.item.geometry.location.lng + "&dirflg=w"
-  console.log("AN ITEM", this.props.item);
   //get the latitude and longtitude of a restaurant
   var geolocation = `${this.props.item.geometry.location.lat},${this.props.item.geometry.location.lng}`;
   //url for google street view api
@@ -50,10 +49,9 @@ render(){
           <div>
             <h3>{this.props.item.name}</h3>
             <p className='list-location-address'>{this.props.item.vicinity}</p>
-              <a className='list-location-button' target='_blank' href={queryStr}>Get Map</a>
-            <DirectionsModal item={this.props.item} directionsClick={this.directionsClick.bind(this)}/>
-            <button className='button'>Add a note</button>
-            <button className='button'>Delete from saved list</button>
+            <a className='list-location-button' target='_blank' href={queryStr}>Get Map</a>
+
+            <button className='list-location-button' onClick={this.delete.bind(this)}>Delete from saved list</button>
           </div>
         </div>
       </div>    
@@ -62,5 +60,5 @@ render(){
   }
 };
 
-
+//Once functionality works --> <NotesModal addNote={this.props.addNote} item={this.props.item}/>
 export default SavedItem;
