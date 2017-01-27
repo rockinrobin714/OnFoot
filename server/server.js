@@ -291,6 +291,6 @@ app.post('/postNote', function(req, res){
   })
 
 
-
+console.log("HEYYYYYYYYYYY THE PORT IS", port)
 app.listen(port);
 console.log("The magic is happening on port:", port);

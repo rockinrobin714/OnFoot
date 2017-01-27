@@ -50,7 +50,6 @@ render(){
             <h3>{this.props.item.name}</h3>
             <p className='list-location-address'>{this.props.item.vicinity}</p>
             <a className='list-location-button' target='_blank' href={queryStr}>Get Map</a>
-
             <button className='list-location-button' onClick={this.delete.bind(this)}>Delete from saved list</button>
           </div>
         </div>
@@ -60,5 +59,6 @@ render(){
   }
 };
 
-//Once functionality works --> <NotesModal addNote={this.props.addNote} item={this.props.item}/>
+//<NotesModal addNote={this.props.addNote} item={this.props.item}/>
+            
 export default SavedItem;
