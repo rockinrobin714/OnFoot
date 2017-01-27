@@ -37,7 +37,7 @@ var port = process.env.PORT || 4040;
 //   }
 
 
-var ip = '127.0.0.1';
+// var ip = '127.0.0.1';
 
 
 //Authentication ---------------------------
