@@ -156,7 +156,7 @@ app.get('/fetchData/:location/:radius',function(req,res){
   //var url='https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=1500&types=restaurant'
   var url='https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=3000&types=restaurant';
   request(`${url}&location=${location}&key=${mapKey}`, function (error, response, body) {
-    console.log(error);
+    console.error(error);
     if (!error && response.statusCode == 200) {
       res.json(body);
     }
@@ -179,7 +179,7 @@ app.get('/variableDistanceSearch/:location/:distance',function(req,res){
   //var url='https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius='+distance+'&types=restaurant';
   var url='https://maps.googleapis.com/maps/api/place/nearbysearch/json?radius=3000&types=restaurant';
   request(`${url}&location=${location}&key=${mapKey}`, function (error, response, body) {
-    console.log(error);
+    console.error(error);
     if (!error && response.statusCode == 200) {
       res.json(body);
     }
@@ -222,7 +222,7 @@ app.get('/fetchLatLong/:address', (req, res) => {
   let address = req.params.address;
   let url = 'https://maps.googleapis.com/maps/api/geocode/json?'
   request(`${url}&address=${address}&key=${mapKey}`, (err, response, body) => {
-    console.log(err);
+    console.error(err);
     if (!err && response.statusCode == 200) {
       res.json(body);
     }
@@ -252,7 +252,7 @@ app.post('/saveRestaurant', function(req, res){
   User.findOneAndUpdate({id:user}, {$push:{"checkList":{place_id:place_id, name:name, rating:rating, price_level:price_level, vicinity:vicinity, geometry:geometry, notes:[]}}},
     {safe: true, upsert: true, new : true},
     function(err, model) {
-      console.log(err);
+      console.error(err);
       res.send("success");
     }
   )
@@ -272,7 +272,7 @@ app.put('/deleteRestaurant', function(req, res){
   User.findOneAndUpdate({id:user}, {$pull:{"checkList":{place_id:place_id}}},
   {safe: true, upsert: true},
   function(err,model){
-  console.log(err);
+  console.error(err);
   res.send("success");
   })
 })
@@ -285,12 +285,12 @@ app.post('/postNote', function(req, res){
   User.findOneAndUpdate({id:user, checklist:{place_id:place_id}}, {$push:{"notes":{text:text}}},
     {safe: true, upsert: true},
     function(err,model){
-    console.log(err);
+    console.error(err);
     res.send("success");
     })
   })
 
 
-console.log("HEYYYYYYYYYYY THE PORT IS", port)
+console.error("HEYYYYYYYYYYY THE PORT IS", port)
 app.listen(port);
 console.log("The magic is happening on port:", port);
